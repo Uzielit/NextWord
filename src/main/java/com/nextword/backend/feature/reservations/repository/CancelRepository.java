@@ -1,16 +1,14 @@
 package com.nextword.backend.feature.reservations.repository;
 
 
-
-import com.nextword.backend.feature.reservations.entity.Reservation;
+import com.nextword.backend.feature.reservations.entity.Cancel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
+public interface CancelRepository extends JpaRepository<Cancel, String> {
 
-public interface ReservationRepository extends JpaRepository<Reservation,String> {
-    List<Reservation> findByStudentId(String studentId);
-
+    List<Cancel> findAll();
 }

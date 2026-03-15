@@ -1,6 +1,7 @@
 package com.nextword.backend.feature.user.services;
 
 
+import com.nextword.backend.feature.user.dto.request.RoleRequest;
 import com.nextword.backend.feature.user.dto.request.StudentRegistrationRequest;
 import com.nextword.backend.feature.user.dto.request.TeacherRegistrationRequest;
 import com.nextword.backend.feature.user.entity.StudentProfile;
@@ -10,6 +11,7 @@ import com.nextword.backend.feature.user.repository.StudentProfileRepository;
 import com.nextword.backend.feature.user.repository.TeacherProfileRepository;
 import com.nextword.backend.feature.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -23,14 +25,23 @@ public class AuthService {
 
     private final TeacherProfileRepository teacherRepository;
 
+
+    private final PasswordEncoder passwordEncoder;
+
+
+
     public AuthService(
             UserRepository userRepository,
             StudentProfileRepository studentRepository,
-            TeacherProfileRepository teacherRepository
+            TeacherProfileRepository teacherRepository,
+            PasswordEncoder passwordEncoder
+
     ) {
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.teacherRepository = teacherRepository;
+        this.passwordEncoder = passwordEncoder;
+
     }
 
     @Transactional
@@ -39,7 +50,8 @@ public class AuthService {
         User user = new User();
         user.setId(newUserId);
         user.setEmail(request.email());
-        user.setPassword(request.password());
+
+        user.setPassword(passwordEncoder.encode(request.password()));
         user.setFullName(request.fullName());
         user.setPhoneNumber(request.phoneNumber());
         user.setRoleId(1);
@@ -64,7 +76,9 @@ public class AuthService {
         User user = new User();
         user.setId(newUserId);
         user.setEmail(request.email());
-        user.setPassword(request.password());
+
+        user.setPassword(passwordEncoder.encode(request.password()));
+
         user.setFullName(request.fullName());
         user.setPhoneNumber(request.phoneNumber());
         user.setRoleId(2);
@@ -78,11 +92,12 @@ public class AuthService {
         profile.setCertifications(request.certifications());
         profile.setHourlyRate(request.hourlyRate());
 
-        profile.setAccountStatus("PENDING");
+        profile.setAccountStatus("ACTIVE");
         profile.setAverageRating(0.0);
 
         teacherRepository.save(profile);
 
         return newUserId;
     }
+
 }

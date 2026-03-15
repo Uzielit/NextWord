@@ -1,4 +1,7 @@
 package com.nextword.backend.feature.reservations.dto;
 
-public class ReservationDto {
+public record ReservationDto (
+        String studentId,
+        String slotId
+){
 }

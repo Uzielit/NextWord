@@ -1,15 +1,14 @@
 package com.nextword.backend.feature.reservations.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.nextword.backend.feature.user.entity.User;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name="Cancelacion_Reprogramacion")
@@ -20,10 +19,12 @@ public class Cancel {
     @Id
     @Column(name = "id_movimiento", length = 36, nullable = false)
     private String id;
-    @Column(name = "id_reserva", length = 36, nullable = false)
-    private String reservationId;
-    @Column(name = "id_solicitante", length = 36, nullable = false)
-    private String requesterId;
+    @ManyToOne
+    @JoinColumn(name = "id_reserva", nullable = false)
+    private Reservation reservation;
+    @ManyToOne
+    @JoinColumn(name = "id_solicitante", nullable = false)
+    private User requester;
     @Column(name = "tipo_accion", length = 20)
     private String actionType;
     @Column(name = "motivo", length = 1000)
@@ -34,4 +35,10 @@ public class Cancel {
     private BigDecimal penaltyAmount;
     @Column(name = "estatus_solicitud", length = 30)
     private String requestStatus;
+
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.id == null) this.id = UUID.randomUUID().toString();
+    }
 }

@@ -1,15 +1,14 @@
 package com.nextword.backend.feature.reservations.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.nextword.backend.feature.user.entity.User;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.util.UUID;
+
 
 @Entity
 @Table(name = "Slot_Disponibles")
@@ -21,8 +20,9 @@ public class SlotAvailable {
     @Id
     @Column(name = "id_slot", length = 36, nullable = false)
     private String id;
-    @Column(name = "id_profesor", length = 36, nullable = false)
-    private String teacherId;
+    @ManyToOne
+    @JoinColumn(name = "id_profesor", nullable = false)
+    private User teacher;
     @Column(name = "fecha_slot", nullable = false)
     private LocalDate slotDate;
     @Column(name = "hora_inicio", length = 5, nullable = false)
@@ -33,4 +33,10 @@ public class SlotAvailable {
     private String classType;
     @Column(name = "estado", length = 20, nullable = false)
     private String status;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.id == null) this.id = UUID.randomUUID().toString();
+    }
+
 }

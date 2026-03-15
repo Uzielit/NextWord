@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "Usuario")
 @Getter
@@ -38,4 +40,6 @@ public class User {
     @Column(name = "foto_perfil", length = 500)
     private String profilePicture;
 
+    @Column(name = "saldo_favor", precision = 10, scale = 2)
+    private BigDecimal walletBalance = BigDecimal.ZERO;
 }

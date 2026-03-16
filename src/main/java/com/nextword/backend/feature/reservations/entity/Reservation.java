@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -34,6 +35,8 @@ public class Reservation {
     private String teacherAttendance;
     @Column(name = "fecha_creacion", nullable = false)
     private ZonedDateTime createdAt;
+    @Column(name = "monto_pagado", precision = 10, scale = 2)
+    private BigDecimal montoPagado = BigDecimal.ZERO;
 
     @PrePersist
     protected void onCreate() {

@@ -13,6 +13,7 @@ import com.nextword.backend.feature.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,17 @@ public class ReservationServices {
         if(!"DISPONIBLE".equals(slotAvailable.getStatus())){
             throw new RuntimeException("Reservation status is not DISPONIBLE");
         }
+        BigDecimal classPrice = new BigDecimal("50.00");
+
+        if (student.getWalletBalance() == null || student.getWalletBalance().compareTo(classPrice) < 0) {
+            throw new RuntimeException(" Saldo actual: $" +
+                    (student.getWalletBalance() == null ? "0.00" : student.getWalletBalance()) +
+                    " Costo de la clase " + classPrice);
+        }
+
+
+        student.setWalletBalance(student.getWalletBalance().subtract(classPrice));
+        userRepository.save(student);
 
         slotAvailable.setStatus("OCUPADO");
         slotRepository.save(slotAvailable);
@@ -49,6 +61,7 @@ public class ReservationServices {
         Reservation reservation = new Reservation();
         reservation.setStudent(student);
         reservation.setSlot(slotAvailable);
+        reservation.setMontoPagado(classPrice);
         Reservation savedReservation = reservationRepository.save(reservation);
 
         return savedReservation.getId();

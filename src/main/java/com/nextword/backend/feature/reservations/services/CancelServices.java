@@ -68,11 +68,11 @@ public class CancelServices {
 
 
         User student = reservation.getStudent();
-        //definir metodo diferente y BigDecimal classPrice = reservation.getMontoPagado();
-        BigDecimal classPrice = new BigDecimal("50.00");
 
-        // student.setWalletBalance(student.getWalletBalance().add(classPrice));
-        // userRepository.save(student);
+        BigDecimal classPrice = reservation.getMontoPagado();
+
+        student.setWalletBalance(student.getWalletBalance().add(classPrice));
+        userRepository.save(student);
 
         User requester = userRepository.findById(request.requesterId())
                 .orElseThrow(() -> new RuntimeException("Usuario solicitante no encontrado"));

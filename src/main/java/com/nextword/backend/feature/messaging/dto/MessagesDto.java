@@ -1,4 +1,8 @@
 package com.nextword.backend.feature.messaging.dto;
 
-public class MessagesDto {
+public record MessagesDto(
+        String senderId,
+        String receiverId,
+        String body
+){
 }

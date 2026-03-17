@@ -1,10 +1,7 @@
 package com.nextword.backend.feature.messaging.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,7 +30,12 @@ public class Message {
     @Column(name = "nombre_archivo_adjunto", length = 255)
     private String attachmentFileName;
     @Column(name = "leido", length = 1, nullable = false)
-    private String Read = "0";
+    private String read = "0";
     @Column(name = "fecha_envio", nullable = false)
     private ZonedDateTime sentAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.sentAt = ZonedDateTime.now();
+    }
 }

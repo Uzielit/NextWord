@@ -3,15 +3,14 @@ package com.nextword.backend.feature.user.services;
 
 import com.nextword.backend.feature.user.dto.AuthResponseDto;
 import com.nextword.backend.feature.user.dto.LoginRequestDto;
-import com.nextword.backend.feature.user.dto.request.RoleRequest;
-import com.nextword.backend.feature.user.dto.request.StudentRegistrationRequest;
-import com.nextword.backend.feature.user.dto.request.TeacherRegistrationRequest;
+import com.nextword.backend.feature.user.dto.request.*;
 import com.nextword.backend.feature.user.entity.StudentProfile;
 import com.nextword.backend.feature.user.entity.TeacherProfile;
 import com.nextword.backend.feature.user.entity.User;
 import com.nextword.backend.feature.user.repository.StudentProfileRepository;
 import com.nextword.backend.feature.user.repository.TeacherProfileRepository;
 import com.nextword.backend.feature.user.repository.UserRepository;
+import com.nextword.backend.shared.email.EmailService;
 import com.nextword.backend.shared.security.JWTService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +34,7 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
+    private final EmailService emailService;
 
 
 
@@ -44,7 +44,8 @@ public class AuthService {
             TeacherProfileRepository teacherRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
-            JWTService jwtService
+            JWTService jwtService,
+            EmailService emailService
 
     ) {
         this.userRepository = userRepository;
@@ -53,6 +54,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.emailService = emailService;
 
     }
     public AuthResponseDto login(LoginRequestDto request) {
@@ -120,6 +122,34 @@ public class AuthService {
         teacherRepository.save(profile);
 
         return newUserId;
+    }
+    @Transactional
+    public String forgotPassword(ForgotPasswordRequestDto request) {
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        String resetCode = String.format("%06d", new java.util.Random().nextInt(999999));
+        user.setResetToken(resetCode);
+        user.setResetTokenExpiration(java.time.LocalDateTime.now().plusMinutes(15));
+        userRepository.save(user);
+        emailService.sendPasswordResetEmail(user.getEmail(), resetCode);
+
+        return "Correo de recuperación enviado con éxito";
+    }
+
+    @Transactional
+    public String resetPassword(ResetPasswordRequestDto request) {
+        User user = userRepository.findByResetToken(request.token())
+                .orElseThrow(() -> new RuntimeException("Código inválido o usuario no encontrado"));
+
+        if (user.getResetTokenExpiration().isBefore(java.time.LocalDateTime.now())) {
+            throw new RuntimeException("El código ha expirado. Por favor solicita uno nuevo.");
+        }
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
+        user.setResetToken(null);
+        user.setResetTokenExpiration(null);
+        userRepository.save(user);
+
+        return "Contraseña actualizada correctamente. Ya puedes iniciar sesión.";
     }
 
 }

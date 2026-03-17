@@ -2,9 +2,7 @@ package com.nextword.backend.feature.user.controller;
 
 import com.nextword.backend.feature.user.dto.AuthResponseDto;
 import com.nextword.backend.feature.user.dto.LoginRequestDto;
-import com.nextword.backend.feature.user.dto.request.RoleRequest;
-import com.nextword.backend.feature.user.dto.request.StudentRegistrationRequest;
-import com.nextword.backend.feature.user.dto.request.TeacherRegistrationRequest;
+import com.nextword.backend.feature.user.dto.request.*;
 import com.nextword.backend.feature.user.services.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +37,16 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Profesor Resgistrado con id " + generatedId );
     }
 
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequestDto request) {
+        String responseMessage = authService.forgotPassword(request);
+        return ResponseEntity.ok(responseMessage);
+    }
+    @PostMapping("/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequestDto request) {
+        String responseMessage = authService.resetPassword(request);
+        return ResponseEntity.ok(responseMessage);
+    }
 
 
 }

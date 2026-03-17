@@ -48,6 +48,12 @@ public class User implements UserDetails {
     @Column(name = "saldo_favor", precision = 10, scale = 2)
     private BigDecimal walletBalance = BigDecimal.ZERO;
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expiration")
+    private java.time.LocalDateTime resetTokenExpiration;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return switch (this.roleId) {

@@ -1,6 +1,8 @@
 package com.nextword.backend.feature.user.services;
 
 
+import com.nextword.backend.feature.user.dto.AuthResponseDto;
+import com.nextword.backend.feature.user.dto.LoginRequestDto;
 import com.nextword.backend.feature.user.dto.request.RoleRequest;
 import com.nextword.backend.feature.user.dto.request.StudentRegistrationRequest;
 import com.nextword.backend.feature.user.dto.request.TeacherRegistrationRequest;
@@ -10,7 +12,10 @@ import com.nextword.backend.feature.user.entity.User;
 import com.nextword.backend.feature.user.repository.StudentProfileRepository;
 import com.nextword.backend.feature.user.repository.TeacherProfileRepository;
 import com.nextword.backend.feature.user.repository.UserRepository;
+import com.nextword.backend.shared.security.JWTService;
 import jakarta.transaction.Transactional;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,20 +33,34 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
+
 
 
     public AuthService(
             UserRepository userRepository,
             StudentProfileRepository studentRepository,
             TeacherProfileRepository teacherRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager,
+            JWTService jwtService
 
     ) {
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.teacherRepository = teacherRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
 
+    }
+    public AuthResponseDto login(LoginRequestDto request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+        );
+        String token = jwtService.generateToken(request.email());
+        return new AuthResponseDto(token);
     }
 
     @Transactional
@@ -71,6 +90,9 @@ public class AuthService {
 
     @Transactional
     public String registerTeacher(TeacherRegistrationRequest request) {
+
+
+        //Pendiente poner la url de profesores
         String newUserId = UUID.randomUUID().toString();
 
         User user = new User();

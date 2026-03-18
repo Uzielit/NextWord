@@ -39,6 +39,7 @@ public class UserController {
         user.setId(UUID.randomUUID().toString());
         return userRepository.save(user);
     }
+
     @PutMapping("/profile")
     public ResponseEntity<String> updateProfile(
             Principal principal,

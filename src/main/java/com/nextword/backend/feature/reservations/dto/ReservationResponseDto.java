@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public record ReservationResponseDto (
         String reservationId,
-        String teacherName,
+        String participantName,
         LocalDate date,
         String startTime,
         String endTime,

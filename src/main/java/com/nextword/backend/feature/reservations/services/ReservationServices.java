@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,9 +67,16 @@ public class ReservationServices {
 
         return savedReservation.getId();
     }
-    public List<ReservationResponseDto> getStudentReservations(String studentId) {
-        return reservationRepository.findByStudentId(studentId)
-                .stream()
+    public List<ReservationResponseDto> getStudentReservations(String studentId, String status) {
+        List<Reservation> reservations;
+
+        if (status == null || status.isBlank()) {
+            reservations = reservationRepository.findByStudentId(studentId);
+        } else {
+            reservations = reservationRepository.findByStudentIdAndStatus(studentId, status);
+        }
+
+        return reservations.stream()
                 .map(res -> new ReservationResponseDto(
                         res.getId(),
                         res.getSlot().getTeacher().getFullName(),
@@ -79,6 +87,35 @@ public class ReservationServices {
                         res.getStatus(),
                         res.getMeetLink() != null ? res.getMeetLink() : "Link pendiente"
                 ))
+                .collect(Collectors.toList());
+    }
+    public List<ReservationResponseDto> getUpcomingAgenda(String userId, boolean isTeacher) {
+        LocalDate hoy = LocalDate.now();
+        List<Reservation> agenda;
+
+        if (isTeacher) {
+            agenda = reservationRepository.findBySlotTeacherIdAndSlotSlotDateGreaterThanEqualOrderBySlotSlotDateAsc(userId, hoy);
+        } else {
+            agenda = reservationRepository.findByStudentIdAndSlotSlotDateGreaterThanEqualOrderBySlotSlotDateAsc(userId, hoy);
+        }
+
+        return agenda.stream()
+                .map(res -> {
+                    String elOtroParticipante = isTeacher
+                            ? res.getStudent().getFullName()
+                            : res.getSlot().getTeacher().getFullName();
+
+                    return new ReservationResponseDto(
+                            res.getId(),
+                            elOtroParticipante,
+                            res.getSlot().getSlotDate(),
+                            res.getSlot().getStartTime(),
+                            res.getSlot().getEndTime(),
+                            res.getSlot().getClassType(),
+                            res.getStatus(),
+                            res.getMeetLink() != null ? res.getMeetLink() : "Link pendiente"
+                    );
+                })
                 .collect(Collectors.toList());
     }
 

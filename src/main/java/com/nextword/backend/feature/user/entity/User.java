@@ -13,6 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class User implements UserDetails {
     private String resetToken;
 
     @Column(name = "reset_token_expiration")
-    private java.time.LocalDateTime resetTokenExpiration;
+    private LocalDateTime resetTokenExpiration;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -90,7 +91,6 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    public boolean isEnabled() {return true;}
 }
+      

@@ -67,6 +67,7 @@ public class ReservationServices {
 
         return savedReservation.getId();
     }
+
     public List<ReservationResponseDto> getStudentReservations(String studentId, String status) {
         List<Reservation> reservations;
 

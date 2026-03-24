@@ -3,6 +3,7 @@ package com.nextword.backend.feature.user.controller;
 import com.nextword.backend.feature.user.dto.response.UserAdminResponseDto;
 import com.nextword.backend.feature.user.entity.User;
 import com.nextword.backend.feature.user.repository.UserRepository;
+import com.nextword.backend.feature.user.services.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,27 +15,16 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/admin")
 public class AdminController {
 
-    private final UserRepository userRepository;
+    private final AdminService adminService;
 
-    public AdminController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
     }
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserAdminResponseDto>> getAllUsers() {
 
-        List<UserAdminResponseDto> cleanUsers = userRepository.findAll()
-                .stream()
-                .map(user -> new UserAdminResponseDto(
-                        user.getId(),
-                        user.getFullName(),
-                        user.getEmail(),
-                        user.getPhoneNumber(),
-                        user.getRoleId(),
-                        user.getWalletBalance()
-                ))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(cleanUsers);
+        return ResponseEntity.ok(adminService.getAllUsers());
     }
 
 

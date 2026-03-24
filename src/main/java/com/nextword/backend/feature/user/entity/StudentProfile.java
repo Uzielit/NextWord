@@ -23,9 +23,11 @@ public class StudentProfile {
     private String id;
     @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate dateOfBirth;
-    @Column(name = "nombre_tutor", length = 150, nullable = false)
+    @Column(name = "nombre_tutor", length = 150)
     private String tutorName;
-    @Column(name = "contacto_tutor", length = 200, nullable = false)
-    private String tutorContact;
+    @Column(name = "email_tutor", length = 100)
+    private String tutorEmail;
+    @Column(name = "telefono_tutor", length = 20)
+    private String tutorPhone;
 
 }

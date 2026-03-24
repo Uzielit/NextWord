@@ -28,17 +28,7 @@ public class UserController {
         this.studentProfileRepository = studentProfileRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    //EndPoint GET
-    @GetMapping
-    public List<User> getAllUsers() {
-    return userRepository.findAll();
-    }
-    //EndPoint Post
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        user.setId(UUID.randomUUID().toString());
-        return userRepository.save(user);
-    }
+
 
     @PutMapping("/profile")
     public ResponseEntity<String> updateProfile(

@@ -4,6 +4,7 @@ package com.nextword.backend.feature.user.services;
 import com.nextword.backend.feature.user.dto.AuthResponseDto;
 import com.nextword.backend.feature.user.dto.LoginRequestDto;
 import com.nextword.backend.feature.user.dto.request.*;
+import com.nextword.backend.feature.user.dto.update.TeacherProfileUpdateDto;
 import com.nextword.backend.feature.user.entity.StudentProfile;
 import com.nextword.backend.feature.user.entity.TeacherProfile;
 import com.nextword.backend.feature.user.entity.User;
@@ -71,7 +72,6 @@ public class AuthService {
         User user = new User();
         user.setId(newUserId);
         user.setEmail(request.email());
-
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setFullName(request.fullname());
         user.setPhoneNumber(request.phoneNumber());
@@ -82,7 +82,8 @@ public class AuthService {
         profile.setId(newUserId);
         profile.setDateOfBirth(request.dateOfBirth());
         profile.setTutorName(request.tutorName());
-        profile.setTutorContact(request.tutorContact());
+        profile.setTutorEmail(request.tutorEmail());
+        profile.setTutorPhone(request.tutorPhone());
 
         studentRepository.save(profile);
 
@@ -100,9 +101,7 @@ public class AuthService {
         User user = new User();
         user.setId(newUserId);
         user.setEmail(request.email());
-
         user.setPassword(passwordEncoder.encode(request.password()));
-
         user.setFullName(request.fullName());
         user.setPhoneNumber(request.phoneNumber());
         user.setRoleId(2);
@@ -110,11 +109,10 @@ public class AuthService {
 
         TeacherProfile profile = new TeacherProfile();
         profile.setId(newUserId);
-        profile.setSpecialization(request.specialization());
-        profile.setYearsOfExperience(request.yearsOfExperience());
-        profile.setProfessionalDescription(request.professionalDescription());
-        profile.setCertifications(request.certifications());
-        profile.setHourlyRate(request.hourlyRate());
+        profile.setSpecialization("Por definir");
+        profile.setYearsOfExperience(0);
+        profile.setProfessionalDescription("Por definir");
+        profile.setCertifications("Ninguna");
 
         profile.setAccountStatus("ACTIVE");
         profile.setAverageRating(0.0);
@@ -122,6 +120,22 @@ public class AuthService {
         teacherRepository.save(profile);
 
         return newUserId;
+    }
+    @Transactional
+    public String completeTeacherProfile(String email, TeacherProfileUpdateDto request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        TeacherProfile profile = teacherRepository.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("Perfil de profesor no encontrado"));
+        profile.setSpecialization(request.specialization());
+        profile.setYearsOfExperience(request.yearsOfExperience());
+        profile.setProfessionalDescription(request.professionalDescription());
+        profile.setCertifications(request.certifications());
+        profile.setAccountStatus("ACTIVE");
+        teacherRepository.save(profile);
+
+        return "Perfil profesional actualizado exitosamente. ¡Ya puedes dar clases!";
     }
     @Transactional
     public String forgotPassword(ForgotPasswordRequestDto request) {

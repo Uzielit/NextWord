@@ -5,6 +5,7 @@ import com.nextword.backend.feature.reservations.entity.SlotAvailable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -12,4 +13,12 @@ public interface SlotAvailableRepository extends JpaRepository<SlotAvailable, St
 
     List<SlotAvailable> findByStatus(String status);
 
+    List<SlotAvailable> findByTeacherIdAndSlotDate(String teacherId, LocalDate slotDate);
+
+
+    List<SlotAvailable> findByStatusAndSlotDateBetweenOrderBySlotDateAscStartTimeAsc(
+            String status, LocalDate start, LocalDate end);
+
+    List<SlotAvailable> findByTeacherIdAndStatusAndSlotDateBetweenOrderBySlotDateAscStartTimeAsc(
+            String teacherId, String status, LocalDate start, LocalDate end);
 }

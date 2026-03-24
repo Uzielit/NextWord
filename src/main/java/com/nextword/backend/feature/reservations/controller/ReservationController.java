@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -53,6 +54,16 @@ public class ReservationController {
         String reservationId = reservationServices.CreateReservation(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Reserva hecha , el id es  " + reservationId);
+    }
+
+    @GetMapping("/slots/filter")
+    public ResponseEntity<List<SlotResponseDto>> getSlotsByRange(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate,
+            @RequestParam(required = false) String teacherId) {
+
+        List<SlotResponseDto> slots = slotAvailableServices.getFilteredAvailableSlots(startDate, endDate, teacherId);
+        return ResponseEntity.ok(slots);
     }
 
     @GetMapping("/myClass")

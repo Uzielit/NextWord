@@ -28,8 +28,6 @@ public class TeacherProfile {
     private String professionalDescription;
     @Column(name = "certificaciones", length = 1000, nullable = false)
     private String certifications;
-    @Column(name = "tarifa_hora", nullable = false)
-    private BigDecimal hourlyRate;
     @Column(name = "estatus_cuenta", length = 20, nullable = false)
     private String accountStatus;
     @Column(name = "calificacion_promedio", nullable = false)

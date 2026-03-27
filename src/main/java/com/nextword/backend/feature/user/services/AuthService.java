@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -76,7 +78,12 @@ public class AuthService {
         user.setFullName(request.fullname());
         user.setPhoneNumber(request.phoneNumber());
         user.setRoleId(1);
+        //Verificacion 2 paso
+        String plainCode = String.format("%06d", new Random().nextInt(999999));
+        user.setResetToken(passwordEncoder.encode(plainCode));
+        user.setResetTokenExpiration(LocalDateTime.now().plusMinutes(15));
         userRepository.save(user);
+
 
         StudentProfile profile = new StudentProfile();
         profile.setId(newUserId);
@@ -87,6 +94,7 @@ public class AuthService {
 
         studentRepository.save(profile);
 
+        emailService.sendAccountVerificationEmail(user.getEmail(), plainCode);
         return newUserId;
     }
 
@@ -135,28 +143,32 @@ public class AuthService {
         profile.setAccountStatus("ACTIVE");
         teacherRepository.save(profile);
 
-        return "Perfil profesional actualizado exitosamente. ¡Ya puedes dar clases!";
+        return "Perfil profesional actualizado exitosamente.";
     }
     @Transactional
     public String forgotPassword(ForgotPasswordRequestDto request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        String resetCode = String.format("%06d", new java.util.Random().nextInt(999999));
-        user.setResetToken(resetCode);
+        String plainCode = String.format("%06d", new Random().nextInt(999999));
+
+        user.setResetToken(passwordEncoder.encode(plainCode));
         user.setResetTokenExpiration(java.time.LocalDateTime.now().plusMinutes(15));
         userRepository.save(user);
-        emailService.sendPasswordResetEmail(user.getEmail(), resetCode);
+        emailService.sendPasswordResetEmail(user.getEmail(), plainCode);
 
         return "Correo de recuperación enviado con éxito";
     }
 
     @Transactional
     public String resetPassword(ResetPasswordRequestDto request) {
-        User user = userRepository.findByResetToken(request.token())
-                .orElseThrow(() -> new RuntimeException("Código inválido o usuario no encontrado"));
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (user.getResetTokenExpiration().isBefore(java.time.LocalDateTime.now())) {
+        if (user.getResetTokenExpiration() == null || user.getResetTokenExpiration().isBefore(java.time.LocalDateTime.now())) {
             throw new RuntimeException("El código ha expirado. Por favor solicita uno nuevo.");
+        }
+        if (!passwordEncoder.matches(request.token(), user.getResetToken())) {
+            throw new RuntimeException("Código de recuperación inválido.");
         }
         user.setPassword(passwordEncoder.encode(request.newPassword()));
         user.setResetToken(null);
@@ -164,6 +176,29 @@ public class AuthService {
         userRepository.save(user);
 
         return "Contraseña actualizada correctamente. Ya puedes iniciar sesión.";
+    }
+
+    @Transactional
+    public String verifyAccount(VerificationMailRequestDto request) {
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (user.getResetTokenExpiration() == null || user.getResetTokenExpiration().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("El código ha expirado. Por favor, solicita uno nuevo.");
+        }
+
+
+        if (!passwordEncoder.matches(request.code(), user.getResetToken())) {
+            throw new RuntimeException("El código de verificación es incorrecto.");
+        }
+
+        user.setResetToken(null);
+        user.setResetTokenExpiration(null);
+
+
+        userRepository.save(user);
+
+        return "Cuenta verificada exitosamente. Ya puedes iniciar sesión.";
     }
 
 }

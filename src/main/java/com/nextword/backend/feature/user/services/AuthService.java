@@ -61,6 +61,8 @@ public class AuthService {
 
     }
     public AuthResponseDto login(LoginRequestDto request) {
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new RuntimeException("Datos incorrectos"));
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );

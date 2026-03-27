@@ -64,5 +64,14 @@ public class AuthController {
         return ResponseEntity.ok(responseMessage);
     }
 
+    @PostMapping("/verify-email")
+    public ResponseEntity<String> verifyEmail(@RequestBody VerificationMailRequestDto request) {
+        try {
+            String responseMessage = authService.verifyAccount(request);
+            return ResponseEntity.ok(responseMessage);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }

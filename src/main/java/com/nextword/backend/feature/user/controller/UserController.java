@@ -2,7 +2,6 @@ package com.nextword.backend.feature.user.controller;
 
 
 import com.nextword.backend.feature.user.dto.update.UserUpdateDto;
-import com.nextword.backend.feature.user.entity.User;
 import com.nextword.backend.feature.user.repository.StudentProfileRepository;
 import com.nextword.backend.feature.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Map;
 
-import java.security.Principal;
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")

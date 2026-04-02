@@ -8,6 +8,8 @@ import com.nextword.backend.feature.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import java.security.Principal;
+import java.util.Map;
 
 import java.security.Principal;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "*")
+
 public class UserController {
 
     private final UserRepository userRepository;
@@ -55,4 +59,16 @@ public class UserController {
     }
 
 
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(Principal principal) {
+        return userRepository.findByEmail(principal.getName())
+                .map(user -> ResponseEntity.ok(Map.of(
+                        "id",       user.getId(),
+                        "email",    user.getEmail(),
+                        "fullName", user.getFullName(),
+                        "roleId",   user.getRoleId()
+                )))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

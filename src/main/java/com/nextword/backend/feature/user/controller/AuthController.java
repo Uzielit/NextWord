@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 
 
 @RestController
@@ -25,52 +26,63 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto request) {
+        try {
+            return ResponseEntity.ok(authService.login(request));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
-    @PostMapping("/register/student")
-    public ResponseEntity<String> registerStudent(
-            @Valid @RequestBody StudentRegistrationRequest request) {
 
+    @PostMapping("/register/student")
+    public ResponseEntity<?> registerStudent(@Valid @RequestBody StudentRegistrationRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            return ResponseEntity.badRequest().body("Error: Este correo ya está registrado en el sistema.");
+            return ResponseEntity.badRequest().body(Map.of("error", "Este correo ya se encuentra registrado."));
         }
 
         String generatedId = authService.registerStudent(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Estudiante Registrado con id " + generatedId );
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Estudiante Registrado con id " + generatedId));
     }
 
-
     @PostMapping("/register/teacher")
-    public ResponseEntity<String> registerTeacher(
-            @Valid @RequestBody TeacherRegistrationRequest request){
-
+    public ResponseEntity<?> registerTeacher(@Valid @RequestBody TeacherRegistrationRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            return ResponseEntity.badRequest().body("Error: Este correo ya está registrado en el sistema.");
+            return ResponseEntity.badRequest().body(Map.of("error", "Este correo ya está registrado en el sistema."));
         }
 
         String generatedId = authService.registerTeacher(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Profesor Registrado con id " + generatedId );
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Profesor Registrado con id " + generatedId));
     }
 
     @PostMapping("/forgotPassword")
-    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequestDto request) {
-        String responseMessage = authService.forgotPassword(request);
-        return ResponseEntity.ok(responseMessage);
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequestDto request) {
+        try {
+            String responseMessage = authService.forgotPassword(request);
+            return ResponseEntity.ok(Map.of("message", responseMessage));
+        } catch (RuntimeException e) {
+
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
+
     @PostMapping("/resetPassword")
-    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequestDto request) {
-        String responseMessage = authService.resetPassword(request);
-        return ResponseEntity.ok(responseMessage);
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequestDto request) {
+        try {
+            String responseMessage = authService.resetPassword(request);
+            return ResponseEntity.ok(Map.of("message", responseMessage));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     @PostMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(@RequestBody VerificationMailRequestDto request) {
+    public ResponseEntity<?> verifyEmail(@RequestBody VerificationMailRequestDto request) {
         try {
             String responseMessage = authService.verifyAccount(request);
-            return ResponseEntity.ok(responseMessage);
+            return ResponseEntity.ok(Map.of("message", responseMessage));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 

@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.UUID;
@@ -63,13 +64,21 @@ public class AuthService {
     public AuthResponseDto login(LoginRequestDto request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Datos incorrectos"));
+
+        if (user.getRoleId() == 2 || user.getRoleId() == 3) {
+            if (!user.getEmail().toLowerCase().endsWith("@nextword.com.mx")) {
+                throw new RuntimeException("Acceso denegado.");
+            }
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
         String token = jwtService.generateToken(request.email());
-        return new AuthResponseDto(token);
+        return new AuthResponseDto(token, user.getRoleId());
     }
 
+    //Función para registrar estudianes
     @Transactional
     public String registerStudent(StudentRegistrationRequest request) {
         String newUserId = UUID.randomUUID().toString();
@@ -80,8 +89,8 @@ public class AuthService {
         user.setFullName(request.fullname());
         user.setPhoneNumber(request.phoneNumber());
         user.setRoleId(1);
-        //Verificacion 2 paso
-        String plainCode = String.format("%06d", new Random().nextInt(999999));
+
+        String plainCode = String.format("%06d", new SecureRandom().nextInt(1000000));
         user.setResetToken(passwordEncoder.encode(plainCode));
         user.setResetTokenExpiration(LocalDateTime.now().plusMinutes(15));
         userRepository.save(user);
@@ -100,12 +109,11 @@ public class AuthService {
         return newUserId;
     }
 
+    //Función para el registro y de los profesores asi como la actualización y completar su perfil de profesores
 
     @Transactional
     public String registerTeacher(TeacherRegistrationRequest request) {
 
-
-        //Pendiente poner la url de profesores
         String newUserId = UUID.randomUUID().toString();
 
         User user = new User();
@@ -147,11 +155,13 @@ public class AuthService {
 
         return "Perfil profesional actualizado exitosamente.";
     }
+
+    //Funicon para enviar código al correo para reestablecer la contraseña
     @Transactional
     public String forgotPassword(ForgotPasswordRequestDto request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        String plainCode = String.format("%06d", new Random().nextInt(999999));
+        String plainCode = String.format("%06d", new SecureRandom().nextInt(1000000));
 
         user.setResetToken(passwordEncoder.encode(plainCode));
         user.setResetTokenExpiration(java.time.LocalDateTime.now().plusMinutes(15));
@@ -161,6 +171,7 @@ public class AuthService {
         return "Correo de recuperación enviado con éxito";
     }
 
+    //Funcion para cambio de contraseña al ingresar codigo
     @Transactional
     public String resetPassword(ResetPasswordRequestDto request) {
         User user = userRepository.findByEmail(request.email())

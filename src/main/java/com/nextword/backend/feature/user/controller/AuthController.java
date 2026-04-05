@@ -20,6 +20,7 @@ public class AuthController {
     private final AuthService authService;
     private final UserRepository userRepository;
 
+    //Api Auth
     public AuthController(AuthService authService, UserRepository userRepository) {
         this.authService = authService;
         this.userRepository = userRepository;

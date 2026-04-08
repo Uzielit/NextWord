@@ -55,13 +55,15 @@ public class User implements UserDetails {
     @Column(name = "reset_token_expiration")
     private LocalDateTime resetTokenExpiration;
 
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return switch (this.roleId) {
             case 1 -> List.of(new SimpleGrantedAuthority("ROLE_ESTUDIANTE"));
             case 2 -> List.of(new SimpleGrantedAuthority("ROLE_PROFESOR"));
             case 3 -> List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
-            default -> List.of(new SimpleGrantedAuthority("ROLE_USER"));
+            default -> List.of(new SimpleGrantedAuthority("ROLE_ESTUDIANTE"));
         };
     }
 

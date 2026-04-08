@@ -63,6 +63,7 @@ public class ReservationServices {
         reservation.setStudent(student);
         reservation.setSlot(slotAvailable);
         reservation.setMontoPagado(classPrice);
+        reservation.setTopic(request.topic());
         Reservation savedReservation = reservationRepository.save(reservation);
 
         return savedReservation.getId();

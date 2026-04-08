@@ -37,6 +37,8 @@ public class Reservation {
     private ZonedDateTime createdAt;
     @Column(name = "monto_pagado", precision = 10, scale = 2)
     private BigDecimal montoPagado = BigDecimal.ZERO;
+    @Column(name = "tema_clase", length = 500)
+    private String topic;
 
     @PrePersist
     protected void onCreate() {

@@ -64,7 +64,12 @@ public class AuthService {
     public AuthResponseDto login(LoginRequestDto request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Datos incorrectos"));
-
+      /*
+      Antes de poner esta verificacion se modifica la BD
+      if (!user.isVerified()) {
+            throw new RuntimeException("Por favor verifica tu correo electrónico antes de iniciar sesión.");
+        }
+       */
         if (user.getRoleId() == 2 || user.getRoleId() == 3) {
             if (!user.getEmail().toLowerCase().endsWith("@nextword.com.mx")) {
                 throw new RuntimeException("Acceso denegado.");
@@ -127,7 +132,7 @@ public class AuthService {
 
         TeacherProfile profile = new TeacherProfile();
         profile.setId(newUserId);
-        profile.setSpecialization("Por definir");
+        profile.setSpecialization("Ingles");
         profile.setYearsOfExperience(0);
         profile.setProfessionalDescription("Por definir");
         profile.setCertifications("Ninguna");

@@ -15,15 +15,14 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 public class Message {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_mensaje", length = 36, nullable = false)
     private String id;
     @Column(name = "id_remitente", length = 36, nullable = false)
     private String senderId;
     @Column(name = "id_destinatario", length = 36, nullable = false)
     private String receiverId;
-    @Column(name = "asunto", length = 150)
-    private String subject;
-    @Column(name = "cuerpo", length = 2000, nullable = false)
+    @Column(name = "texto_mensaje", length = 2000, nullable = false)
     private String body;
     @Column(name = "url_adjunto", length = 500)
     private String attachmentUrl;

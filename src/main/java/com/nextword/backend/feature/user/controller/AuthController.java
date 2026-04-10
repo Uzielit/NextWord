@@ -45,15 +45,6 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Estudiante Registrado con id " + generatedId));
     }
 
-    @PostMapping("/register/teacher")
-    public ResponseEntity<?> registerTeacher(@Valid @RequestBody TeacherRegistrationRequest request) {
-        if (userRepository.findByEmail(request.email()).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Este correo ya está registrado en el sistema."));
-        }
-
-        String generatedId = authService.registerTeacher(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Profesor Registrado con id " + generatedId));
-    }
 
     @PostMapping("/forgotPassword")
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequestDto request) {

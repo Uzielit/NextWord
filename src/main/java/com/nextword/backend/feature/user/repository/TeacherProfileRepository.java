@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TeacherProfileRepository extends JpaRepository<TeacherProfile,String> {
+
+
 }

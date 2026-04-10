@@ -114,52 +114,6 @@ public class AuthService {
         return newUserId;
     }
 
-    //Función para el registro y de los profesores asi como la actualización y completar su perfil de profesores
-
-    @Transactional
-    public String registerTeacher(TeacherRegistrationRequest request) {
-
-        String newUserId = UUID.randomUUID().toString();
-
-        User user = new User();
-        user.setId(newUserId);
-        user.setEmail(request.email());
-        user.setPassword(passwordEncoder.encode(request.password()));
-        user.setFullName(request.fullName());
-        user.setPhoneNumber(request.phoneNumber());
-        user.setRoleId(2);
-        userRepository.save(user);
-
-        TeacherProfile profile = new TeacherProfile();
-        profile.setId(newUserId);
-        profile.setSpecialization("Ingles");
-        profile.setYearsOfExperience(0);
-        profile.setProfessionalDescription("Por definir");
-        profile.setCertifications("Ninguna");
-
-        profile.setAccountStatus("ACTIVE");
-        profile.setAverageRating(0.0);
-
-        teacherRepository.save(profile);
-
-        return newUserId;
-    }
-    @Transactional
-    public String completeTeacherProfile(String email, TeacherProfileUpdateDto request) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        TeacherProfile profile = teacherRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("Perfil de profesor no encontrado"));
-        profile.setSpecialization(request.specialization());
-        profile.setYearsOfExperience(request.yearsOfExperience());
-        profile.setProfessionalDescription(request.professionalDescription());
-        profile.setCertifications(request.certifications());
-        profile.setAccountStatus("ACTIVE");
-        teacherRepository.save(profile);
-
-        return "Perfil profesional actualizado exitosamente.";
-    }
 
     //Funicon para enviar código al correo para reestablecer la contraseña
     @Transactional

@@ -5,7 +5,7 @@ public record TeacherResponseDto(
         String fullName,
         String specialization,
         Double averageRating,
-        String profetionalDescription,
+        String professionalDescription,
         String certifications,
         Integer yearsOfExperience
 ) {

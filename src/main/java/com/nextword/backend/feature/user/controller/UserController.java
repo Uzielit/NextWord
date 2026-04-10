@@ -1,9 +1,10 @@
 package com.nextword.backend.feature.user.controller;
 
 
-import com.nextword.backend.feature.user.dto.update.UserUpdateDto;
+import com.nextword.backend.feature.user.dto.update.StudentUpdateDto;
 import com.nextword.backend.feature.user.repository.StudentProfileRepository;
 import com.nextword.backend.feature.user.repository.UserRepository;
+import com.nextword.backend.feature.user.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -17,54 +18,32 @@ import java.util.Map;
 
 public class UserController {
 
-    private final UserRepository userRepository;
-    private final StudentProfileRepository studentProfileRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository,
-                          StudentProfileRepository studentProfileRepository,
-                          PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.studentProfileRepository = studentProfileRepository;
-        this.passwordEncoder = passwordEncoder;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
-
 
     @PutMapping("/profile")
     public ResponseEntity<String> updateProfile(
             Principal principal,
-            @RequestBody UserUpdateDto updateDto) {
-
-        String emailToken = principal.getName();
-
-        return userRepository.findByEmail(emailToken)
-                .map(user -> {
-                    if (updateDto.fullName() != null) user.setFullName(updateDto.fullName());
-                    if (updateDto.phoneNumber() != null) user.setPhoneNumber(updateDto.phoneNumber());
-                    if (updateDto.profilePicture() != null) user.setProfilePicture(updateDto.profilePicture());
-
-                    if (updateDto.newPassword() != null && !updateDto.newPassword().isBlank()) {
-                        user.setPassword(passwordEncoder.encode(updateDto.newPassword()));
-                    }
-                    userRepository.save(user);
-
-
-                    return ResponseEntity.ok("Perfil actualizado correctamente");
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+            @RequestBody StudentUpdateDto updateDto) {
+        try {
+            userService.updateStudentProfile(principal.getName(), updateDto);
+            return ResponseEntity.ok("Perfil actualizado correctamente");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-
-
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(Principal principal) {
-        return userRepository.findByEmail(principal.getName())
-                .map(user -> ResponseEntity.ok(Map.of(
-                        "id",       user.getId(),
-                        "email",    user.getEmail(),
-                        "fullName", user.getFullName(),
-                        "roleId",   user.getRoleId()
-                )))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+
+            Map<String, Object> userData = userService.getCurrentUserData(principal.getName());
+            return ResponseEntity.ok(userData);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

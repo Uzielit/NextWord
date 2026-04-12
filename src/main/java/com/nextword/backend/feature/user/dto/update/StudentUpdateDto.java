@@ -1,7 +1,7 @@
 package com.nextword.backend.feature.user.dto.update;
 
 
-import java.time.LocalDate;
+
 
 public record StudentUpdateDto(
         // Datos de la tabla Usuario

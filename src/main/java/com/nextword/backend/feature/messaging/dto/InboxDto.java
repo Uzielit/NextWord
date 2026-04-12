@@ -10,7 +10,8 @@ public record InboxDto(
         String lastMessage,
         ZonedDateTime dateLastMessage,
         boolean sentByMe,
-        int unreadCount
+        int unreadCount,
+        String lastMessageRead
 
 ) {
 }

@@ -47,14 +47,13 @@ public class TeacherProfileController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TeacherProfile> getTeacherById(@PathVariable String id) {
+    public ResponseEntity<TeacherResponseDto> getTeacherById(@PathVariable String id) {
         try {
             return ResponseEntity.ok(teacherService.getTeacherById(id));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
-
     @GetMapping
     public ResponseEntity<List<TeacherResponseDto>> getAllTeachers() {
         return ResponseEntity.ok(teacherService.getAllActiveTeachers());

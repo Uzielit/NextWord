@@ -60,7 +60,7 @@ public class SlotAvailableServices {
         newSlot.setStartTime(request.startTime());
         newSlot.setEndTime(request.endTime());
         newSlot.setClassType(request.classType());
-        newSlot.setStatus("DISPONIBLE");
+        newSlot.setStatus("Disponible");
 
 
         SlotAvailable savedSlot = slotRepository.save(newSlot);
@@ -72,10 +72,10 @@ public class SlotAvailableServices {
         List<SlotAvailable> slots;
         if (teacherId != null && !teacherId.isBlank()) {
             slots = slotRepository.findByTeacherIdAndStatusAndSlotDateBetweenOrderBySlotDateAscStartTimeAsc(
-                    teacherId, "DISPONIBLE", start, end);
+                    teacherId, "Disponible", start, end);
         } else {
             slots = slotRepository.findByStatusAndSlotDateBetweenOrderBySlotDateAscStartTimeAsc(
-                    "DISPONIBLE", start, end);
+                    "Disponible", start, end);
         }
 
         return slots.stream()
@@ -90,7 +90,7 @@ public class SlotAvailableServices {
     }
 
     public List<SlotResponseDto> getAvailableSlots() {
-        return slotRepository.findByStatus("DISPONIBLE")
+        return slotRepository.findByStatus("Disponible")
                 .stream()
                 .map(slot -> new SlotResponseDto(
                         slot.getId(),

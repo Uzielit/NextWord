@@ -28,7 +28,7 @@ public class ReviewServices {
         Reservation reservation = reservationRepository.findById(request.reservationId())
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
 
-        if (!"COMPLETED".equals(reservation.getStatus())) {
+        if (!"Completada".equals(reservation.getStatus())) {
             throw new RuntimeException("No puedes calificar una clase que no ha terminado.");
         }
 
@@ -44,6 +44,6 @@ public class ReviewServices {
 
         reviewRepository.save(review);
 
-        return "Termianado Review";
+        return "Reseña guardada exitosamente";
     }
 }

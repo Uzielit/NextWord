@@ -43,7 +43,7 @@ public class CancelServices {
 
         Reservation reservation = reservationRepository.findById(request.reservaId())
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
-        if (!"PENDING".equals(reservation.getStatus())) {
+        if (!"PendientePago".equals(reservation.getStatus())) {
             throw new RuntimeException("Solo puedes cancelar clases pendientes.");
         }
 
@@ -59,10 +59,10 @@ public class CancelServices {
             throw new RuntimeException("No se puede cancelar una clase con menos de 24 horas de anticipación");
         }
 
-        reservation.setStatus("CANCELED");
+        reservation.setStatus("Cancelada");
         reservationRepository.save(reservation);
 
-        slot.setStatus("DISPONIBLE");
+        slot.setStatus("Disponible");
         slotRepository.save(slot);
 
 

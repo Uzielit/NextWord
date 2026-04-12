@@ -61,9 +61,22 @@ public class TeacherService {
         );
     }
 
-    public TeacherProfile getTeacherById(String id) {
-        return teacherRepository.findById(id)
+    public TeacherResponseDto getTeacherById(String id) {
+        TeacherProfile profile = teacherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Profesor no encontrado"));
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        return new TeacherResponseDto(
+                profile.getId(),
+                user.getFullName(),
+                profile.getSpecialization(),
+                profile.getAverageRating() != null ? profile.getAverageRating() : 0.0,
+                profile.getProfessionalDescription(),
+                profile.getCertifications(),
+                profile.getYearsOfExperience()
+        );
     }
 
     public List<TeacherResponseDto> getAllActiveTeachers() {
@@ -78,9 +91,9 @@ public class TeacherService {
                             t.getId(),
                             user.getFullName(),
                             t.getSpecialization(),
-                            t.getAverageRating() != null ? t.getAverageRating() : 5.0,
-                            t.getCertifications(),
+                            t.getAverageRating() != null ? t.getAverageRating() : 0.0,
                             t.getProfessionalDescription(),
+                            t.getCertifications(),
                             t.getYearsOfExperience()
                     );
                 })

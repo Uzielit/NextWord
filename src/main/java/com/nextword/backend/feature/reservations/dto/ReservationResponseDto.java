@@ -4,12 +4,14 @@ import java.time.LocalDate;
 
 public record ReservationResponseDto (
         String reservationId,
-        String participantName,
+        String studentName,
+        String teacherName,
         LocalDate date,
         String startTime,
         String endTime,
-        String classType,
+        String topic,
         String status,
-        String meetLink
+        String meetLink,
+        Boolean hasReview
 ){
 }

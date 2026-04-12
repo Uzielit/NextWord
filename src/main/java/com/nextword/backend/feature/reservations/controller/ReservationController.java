@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -35,12 +36,12 @@ public class ReservationController {
         this.userRepository = userRepository;
     }
     @PostMapping("/slot")
-    public ResponseEntity<String> createSlot(@RequestBody SlotAvailableDto request) {
+    public ResponseEntity<Map<String, String>> createSlot(@RequestBody SlotAvailableDto request) {
         String generatedSlotId = slotAvailableServices.createTeacherSlot(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("Slot de horario creado con exito id es " + generatedSlotId);
+                .body(Map.of("Slot generado con Id ", generatedSlotId));
     }
 
     @GetMapping("/slots/available")
@@ -74,7 +75,17 @@ public class ReservationController {
         String email = principal.getName();
         User usuarioLogueado = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        List<ReservationResponseDto> myReservations = reservationServices.getStudentReservations(usuarioLogueado.getId(), status);
+
+        String dbStatus = status;
+        if (status != null) {
+            switch (status.toLowerCase()) {
+                case "pendientes": dbStatus = "PendientePago"; break;
+                case "completadas": dbStatus = "Completada"; break;
+                case "canceladas": dbStatus = "Cancelada"; break;
+
+            }
+        }
+        List<ReservationResponseDto> myReservations = reservationServices.getStudentReservations(usuarioLogueado.getId(), dbStatus);
 
         return ResponseEntity.ok(myReservations);
     }

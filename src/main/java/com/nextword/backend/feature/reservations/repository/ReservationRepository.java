@@ -17,6 +17,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,String>
 
     List<Reservation> findByStudentIdAndStatus(String studentId, String status);
 
+    List<Reservation> findBySlotTeacherId(String teacherId);
 
     List<Reservation> findByStudentIdAndSlotSlotDateGreaterThanEqualOrderBySlotSlotDateAsc(
             String studentId, LocalDate date);

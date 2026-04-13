@@ -20,20 +20,20 @@ public class Transaction {
     @Id
     @Column(name = "id_transaccion", length = 36, nullable = false)
     private String id;
-    @Column(name = "id_reserva", length = 36, nullable = false)
+    @Column(name = "id_usuario", length = 36, nullable = false)
+    private String userId;
+    @Column(name = "id_reserva", length = 36)
     private String reservationId;
     @Column(name = "monto_total", nullable = false)
     private BigDecimal totalAmount;
+    @Column(name = "metodo_pago", length = 50)
+    private String paymentMethod = "MercadoPago";
     @Column(name = "referencia_mercadopago", length = 255)
     private String mercadoPagoReference;
     @Column(name = "estado_pago", length = 30, nullable = false)
     private String paymentStatus;
     @Column(name = "url_recibo", length = 500)
     private String receiptUrl;
-    @Column(name = "comision_plataforma", nullable = false)
-    private BigDecimal platformCommission;
-    @Column(name = "ganancia_profesor", nullable = false)
-    private BigDecimal teacherProfit;
     @Column(name = "fecha_transaccion", nullable = false)
     private ZonedDateTime transactionDate;
 }

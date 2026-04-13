@@ -2,8 +2,8 @@ package com.nextword.backend.feature.reservations.services;
 
 
 
-import com.nextword.backend.feature.reservations.dto.SlotAvailableDto;
-import com.nextword.backend.feature.reservations.dto.SlotResponseDto;
+import com.nextword.backend.feature.reservations.dto.CreateSlotRequest;
+import com.nextword.backend.feature.reservations.dto.SlotResponse;
 import com.nextword.backend.feature.reservations.entity.SlotAvailable;
 import com.nextword.backend.feature.reservations.repository.SlotAvailableRepository;
 import com.nextword.backend.feature.user.entity.User;
@@ -29,7 +29,7 @@ public class SlotAvailableServices {
         this.userRepository = userRepository;
     }
 
-    public String createTeacherSlot(SlotAvailableDto request) {
+    public String createTeacherSlot(CreateSlotRequest request) {
 
         User teacher = userRepository.findById(request.teacherId())
                 .orElseThrow(() -> new RuntimeException("Profesor no encontrado con el ID: " + request.teacherId()));
@@ -68,7 +68,7 @@ public class SlotAvailableServices {
 
         return savedSlot.getId();
     }
-    public List<SlotResponseDto> getFilteredAvailableSlots(LocalDate start, LocalDate end, String teacherId) {
+    public List<SlotResponse> getFilteredAvailableSlots(LocalDate start, LocalDate end, String teacherId) {
         List<SlotAvailable> slots;
         if (teacherId != null && !teacherId.isBlank()) {
             slots = slotRepository.findByTeacherIdAndStatusAndSlotDateBetweenOrderBySlotDateAscStartTimeAsc(
@@ -79,7 +79,7 @@ public class SlotAvailableServices {
         }
 
         return slots.stream()
-                .map(slot -> new SlotResponseDto(
+                .map(slot -> new SlotResponse(
                         slot.getId(),
                         slot.getTeacher().getFullName(),
                         slot.getSlotDate(),
@@ -89,10 +89,10 @@ public class SlotAvailableServices {
                 )).collect(Collectors.toList());
     }
 
-    public List<SlotResponseDto> getAvailableSlots() {
+    public List<SlotResponse> getAvailableSlots() {
         return slotRepository.findByStatus("Disponible")
                 .stream()
-                .map(slot -> new SlotResponseDto(
+                .map(slot -> new SlotResponse(
                         slot.getId(),
                         slot.getTeacher().getFullName(),
                         slot.getSlotDate(),

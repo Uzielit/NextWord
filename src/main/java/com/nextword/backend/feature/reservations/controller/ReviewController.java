@@ -1,6 +1,6 @@
 package com.nextword.backend.feature.reservations.controller;
 
-import com.nextword.backend.feature.reservations.dto.ReviewRequestDto;
+import com.nextword.backend.feature.reservations.dto.ReviewRequest;
 import com.nextword.backend.feature.reservations.services.ReviewServices;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ResponseEntity<String> leaveReview(@RequestBody ReviewRequestDto request) {
+    public ResponseEntity<String> leaveReview(@RequestBody ReviewRequest request) {
         String message = reviewService.createReview(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }

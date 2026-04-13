@@ -1,15 +1,12 @@
 package com.nextword.backend.feature.reservations.services;
 
-import com.nextword.backend.feature.reservations.dto.ReviewRequestDto;
+import com.nextword.backend.feature.reservations.dto.ReviewRequest;
 import com.nextword.backend.feature.reservations.entity.Reservation;
 import com.nextword.backend.feature.reservations.entity.Review;
 import com.nextword.backend.feature.reservations.repository.ReservationRepository;
 import com.nextword.backend.feature.reservations.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
-import java.time.ZonedDateTime;
-import java.util.UUID;
 
 @Service
 public class ReviewServices {
@@ -23,7 +20,7 @@ public class ReviewServices {
     }
 
     @Transactional
-    public String createReview(ReviewRequestDto request) {
+    public String createReview(ReviewRequest request) {
 
         Reservation reservation = reservationRepository.findById(request.reservationId())
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
@@ -40,7 +37,7 @@ public class ReviewServices {
         Review review = new Review();
         review.setReservation(reservation);
         review.setRating(request.rating());
-        review.setComment(request.comentary());
+        review.setComment(request.comment());
 
         reviewRepository.save(review);
 

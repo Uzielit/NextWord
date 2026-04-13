@@ -44,6 +44,6 @@ public class Reservation {
     protected void onCreate() {
         this.id = UUID.randomUUID().toString();
         this.createdAt = ZonedDateTime.now();
-        this.status = "PendientePago";
+        this.status = "Pagado";
     }
 }

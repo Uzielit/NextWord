@@ -1,8 +1,8 @@
 package com.nextword.backend.feature.reservations.dto;
 
-public record ReviewRequestDto (
+public record ReviewRequest(
         String reservationId,
-        String comentary,
+        String comment,
         Integer rating
 
 

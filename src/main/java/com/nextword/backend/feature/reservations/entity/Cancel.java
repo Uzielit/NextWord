@@ -31,8 +31,6 @@ public class Cancel {
     private String reason;
     @Column(name = "monto_reembolso")
     private BigDecimal refundAmount;
-    @Column(name = "monto_penalizacion")
-    private BigDecimal penaltyAmount;
     @Column(name = "estatus_solicitud", length = 30)
     private String requestStatus;
 

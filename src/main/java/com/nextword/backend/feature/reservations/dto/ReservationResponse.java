@@ -2,7 +2,7 @@ package com.nextword.backend.feature.reservations.dto;
 
 import java.time.LocalDate;
 
-public record ReservationResponseDto (
+public record ReservationResponse(
         String reservationId,
         String studentName,
         String teacherName,

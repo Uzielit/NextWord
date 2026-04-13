@@ -36,7 +36,7 @@ public class ReservationController {
         this.userRepository = userRepository;
     }
     @PostMapping("/slot")
-    public ResponseEntity<Map<String, String>> createSlot(@RequestBody SlotAvailableDto request) {
+    public ResponseEntity<Map<String, String>> createSlot(@RequestBody CreateSlotRequest request) {
         String generatedSlotId = slotAvailableServices.createTeacherSlot(request);
 
         return ResponseEntity
@@ -45,30 +45,30 @@ public class ReservationController {
     }
 
     @GetMapping("/slots/available")
-    public ResponseEntity<List<SlotResponseDto>>getAvailableSlots(){
-        List<SlotResponseDto> availableSlots = slotAvailableServices.getAvailableSlots();
+    public ResponseEntity<List<SlotResponse>>getAvailableSlots(){
+        List<SlotResponse> availableSlots = slotAvailableServices.getAvailableSlots();
         return ResponseEntity.ok(availableSlots);
     }
 
     @PostMapping("/book")
-    public ResponseEntity<String> bookSlot(@RequestBody ReservationDto request) {
+    public ResponseEntity<String> bookSlot(@RequestBody BookClassRequest request) {
         String reservationId = reservationServices.CreateReservation(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Reserva hecha , el id es  " + reservationId);
     }
 
     @GetMapping("/slots/filter")
-    public ResponseEntity<List<SlotResponseDto>> getSlotsByRange(
+    public ResponseEntity<List<SlotResponse>> getSlotsByRange(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
             @RequestParam(required = false) String teacherId) {
 
-        List<SlotResponseDto> slots = slotAvailableServices.getFilteredAvailableSlots(startDate, endDate, teacherId);
+        List<SlotResponse> slots = slotAvailableServices.getFilteredAvailableSlots(startDate, endDate, teacherId);
         return ResponseEntity.ok(slots);
     }
 
     @GetMapping("/myClass")
-    public ResponseEntity<List<ReservationResponseDto>> getMyReservations(
+    public ResponseEntity<List<ReservationResponse>> getMyReservations(
             Principal principal,
             @RequestParam(required = false) String status) {
 
@@ -79,13 +79,13 @@ public class ReservationController {
         String dbStatus = status;
         if (status != null) {
             switch (status.toLowerCase()) {
-                case "pendientes": dbStatus = "PendientePago"; break;
+                case "pendientes": dbStatus = "Pagado"; break;
                 case "completadas": dbStatus = "Completada"; break;
                 case "canceladas": dbStatus = "Cancelada"; break;
 
             }
         }
-        List<ReservationResponseDto> myReservations = reservationServices.getStudentReservations(usuarioLogueado.getId(), dbStatus);
+        List<ReservationResponse> myReservations = reservationServices.getStudentReservations(usuarioLogueado.getId(), dbStatus);
 
         return ResponseEntity.ok(myReservations);
     }
@@ -96,21 +96,21 @@ public class ReservationController {
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<String> cancelReservation(@RequestBody CancelRequestDto request) {
+    public ResponseEntity<String> cancelReservation(@RequestBody CancelClassRequest request) {
         String message = cancelServices.processCancellation(request);
         return ResponseEntity.ok(message);
     }
 
     @GetMapping("/myAgenda")
     @PreAuthorize("hasRole('ESTUDIANTE')")
-    public ResponseEntity<List<ReservationResponseDto>> getStudentAgenda(Principal principal) {
+    public ResponseEntity<List<ReservationResponse>> getStudentAgenda(Principal principal) {
         User usuario = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return ResponseEntity.ok(reservationServices.getUpcomingAgenda(usuario.getId(), false));
     }
     @GetMapping("/teacherAgenda")
     @PreAuthorize("hasRole('PROFESOR')")
-    public ResponseEntity<List<ReservationResponseDto>> getTeacherAgenda(Principal principal) {
+    public ResponseEntity<List<ReservationResponse>> getTeacherAgenda(Principal principal) {
         User usuario = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return ResponseEntity.ok(reservationServices.getUpcomingAgenda(usuario.getId(), true));

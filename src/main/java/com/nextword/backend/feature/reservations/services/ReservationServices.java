@@ -1,9 +1,9 @@
 package com.nextword.backend.feature.reservations.services;
 
-import com.nextword.backend.feature.reservations.dto.ReservationDto;
+import com.nextword.backend.feature.reservations.dto.BookClassRequest;
 
 import com.nextword.backend.feature.reservations.dto.CompleteClassRequest;
-import com.nextword.backend.feature.reservations.dto.ReservationResponseDto;
+import com.nextword.backend.feature.reservations.dto.ReservationResponse;
 import com.nextword.backend.feature.reservations.entity.Reservation;
 import com.nextword.backend.feature.reservations.entity.SlotAvailable;
 import com.nextword.backend.feature.reservations.repository.ReservationRepository;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +38,7 @@ public class ReservationServices {
     }
 
     @Transactional
-    public String CreateReservation (ReservationDto request) {
+    public String CreateReservation (BookClassRequest request) {
         User student = userRepository.findById(request.studentId())
                 .orElseThrow(()-> new RuntimeException("student not found"));
 
@@ -74,7 +73,7 @@ public class ReservationServices {
         return savedReservation.getId();
     }
 
-    public List<ReservationResponseDto> getTeacherReservations(String teacherId, String status) {
+    public List<ReservationResponse> getTeacherReservations(String teacherId, String status) {
         List<Reservation> reservasDelProfe = reservationRepository.findBySlotTeacherId(teacherId);
 
         return reservasDelProfe.stream()
@@ -92,7 +91,7 @@ public class ReservationServices {
                     // 🌟 AÑADIDO: Calculamos si ya tiene reseña
                     boolean hasReview = reviewRepository.existsById(reserva.getId());
 
-                    return new ReservationResponseDto(
+                    return new ReservationResponse(
                             reserva.getId(),
                             estudiante.getFullName(),
                             profe.getFullName(),
@@ -107,7 +106,7 @@ public class ReservationServices {
                 })
                 .toList();
     }
-    public List<ReservationResponseDto> getUpcomingAgenda(String userId, boolean isTeacher) {
+    public List<ReservationResponse> getUpcomingAgenda(String userId, boolean isTeacher) {
         LocalDate hoy = LocalDate.now();
         List<Reservation> agenda;
 
@@ -121,7 +120,7 @@ public class ReservationServices {
                 .map(res -> {
                     boolean hasReview = reviewRepository.existsById(res.getId());
 
-                    return new ReservationResponseDto(
+                    return new ReservationResponse(
                             res.getId(),
                             res.getStudent().getFullName(),
                             res.getSlot().getTeacher().getFullName(),
@@ -137,7 +136,7 @@ public class ReservationServices {
                 .collect(Collectors.toList());
     }
 
-    public List<ReservationResponseDto> getStudentReservations(String studentId, String status) {
+    public List<ReservationResponse> getStudentReservations(String studentId, String status) {
         List<Reservation> reservasDelAlumno = reservationRepository.findByStudentId(studentId);
 
         return reservasDelAlumno.stream()
@@ -153,7 +152,7 @@ public class ReservationServices {
                             .orElseThrow(() -> new RuntimeException("Profesor no encontrado"));
                     boolean hasReview = reviewRepository.existsById(reserva.getId());
 
-                    return new ReservationResponseDto(
+                    return new ReservationResponse(
                             reserva.getId(),
                             estudiante.getFullName(),
                             profe.getFullName(),
@@ -175,7 +174,7 @@ public class ReservationServices {
         Reservation reservation = reservationRepository.findById(request.reservationId())
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
 
-        if (!"PendientePago".equals(reservation.getStatus())) {
+        if (!"Pagado".equals(reservation.getStatus())) {
             throw new RuntimeException("Esta clase ya fue terminada");
         }
 

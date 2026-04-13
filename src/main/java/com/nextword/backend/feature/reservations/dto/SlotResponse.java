@@ -2,8 +2,9 @@ package com.nextword.backend.feature.reservations.dto;
 
 import java.time.LocalDate;
 
-public record SlotAvailableDto(
-        String teacherId,
+public record SlotResponse(
+        String slotId,
+        String teacherName,
         LocalDate slotDate,
         String startTime,
         String endTime,

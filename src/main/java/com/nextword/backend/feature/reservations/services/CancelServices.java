@@ -1,6 +1,6 @@
 package com.nextword.backend.feature.reservations.services;
 
-import com.nextword.backend.feature.reservations.dto.CancelRequestDto;
+import com.nextword.backend.feature.reservations.dto.CancelClassRequest;
 import com.nextword.backend.feature.reservations.entity.Cancel;
 import com.nextword.backend.feature.reservations.entity.Reservation;
 import com.nextword.backend.feature.reservations.entity.SlotAvailable;
@@ -36,14 +36,13 @@ public class CancelServices {
         this.userRepository = userRepository;
     }
 
-
     @Transactional
-    public String processCancellation(CancelRequestDto request) {
+    public String processCancellation(CancelClassRequest request) {
 
-
-        Reservation reservation = reservationRepository.findById(request.reservaId())
+        Reservation reservation = reservationRepository.findById(request.reservationId())
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
-        if (!"PendientePago".equals(reservation.getStatus())) {
+
+        if (!"Pagado".equals(reservation.getStatus())) {
             throw new RuntimeException("Solo puedes cancelar clases pendientes.");
         }
 
@@ -65,12 +64,8 @@ public class CancelServices {
         slot.setStatus("Disponible");
         slotRepository.save(slot);
 
-
-
         User student = reservation.getStudent();
-
         BigDecimal classPrice = reservation.getMontoPagado();
-
         student.setWalletBalance(student.getWalletBalance().add(classPrice));
         userRepository.save(student);
 
@@ -83,12 +78,10 @@ public class CancelServices {
         cancelRecord.setActionType(request.actionType());
         cancelRecord.setReason(request.reason());
         cancelRecord.setRefundAmount(classPrice);
-        cancelRecord.setPenaltyAmount(BigDecimal.ZERO);
         cancelRecord.setRequestStatus("APPROVED");
 
         cancelRepository.save(cancelRecord);
 
-        return "Cancelación exitosa. Se han agregado $" + classPrice + " a tu monedero virtual";
+        return "Cancelación exitosa. Se han devuelto $" + classPrice + " a tu monedero virtual.";
     }
-
 }

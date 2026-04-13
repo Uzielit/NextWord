@@ -4,9 +4,8 @@ package com.nextword.backend.feature.user.services;
 import com.nextword.backend.feature.user.dto.AuthResponseDto;
 import com.nextword.backend.feature.user.dto.LoginRequestDto;
 import com.nextword.backend.feature.user.dto.request.*;
-import com.nextword.backend.feature.user.dto.update.TeacherProfileUpdateDto;
+import com.nextword.backend.feature.user.dto.request.student.StudentRegistrationRequest;
 import com.nextword.backend.feature.user.entity.StudentProfile;
-import com.nextword.backend.feature.user.entity.TeacherProfile;
 import com.nextword.backend.feature.user.entity.User;
 import com.nextword.backend.feature.user.repository.StudentProfileRepository;
 import com.nextword.backend.feature.user.repository.TeacherProfileRepository;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Random;
 import java.util.UUID;
 
 @Service

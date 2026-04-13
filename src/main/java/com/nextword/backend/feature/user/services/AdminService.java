@@ -2,8 +2,7 @@ package com.nextword.backend.feature.user.services;
 
 import com.nextword.backend.feature.payments.repository.PaymentRepository;
 import com.nextword.backend.feature.reservations.repository.ReservationRepository;
-import com.nextword.backend.feature.user.dto.request.AdminDashboardResponse;
-import com.nextword.backend.feature.user.dto.response.UserAdminResponseDto;
+import com.nextword.backend.feature.user.dto.request.admin.AdminDashboardResponse;
 import com.nextword.backend.feature.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +11,6 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AdminService {

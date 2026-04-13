@@ -1,4 +1,4 @@
-package com.nextword.backend.feature.user.dto.request;
+package com.nextword.backend.feature.user.dto.request.student;
 
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;

@@ -1,8 +1,8 @@
 package com.nextword.backend.feature.user.controller;
 
-import com.nextword.backend.feature.user.dto.AuthResponseDto;
 import com.nextword.backend.feature.user.dto.LoginRequestDto;
 import com.nextword.backend.feature.user.dto.request.*;
+import com.nextword.backend.feature.user.dto.request.student.StudentRegistrationRequest;
 import com.nextword.backend.feature.user.repository.UserRepository;
 import com.nextword.backend.feature.user.services.AuthService;
 import jakarta.validation.Valid;

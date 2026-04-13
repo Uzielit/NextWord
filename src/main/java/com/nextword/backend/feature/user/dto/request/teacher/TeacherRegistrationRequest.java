@@ -1,6 +1,5 @@
-package com.nextword.backend.feature.user.dto.request;
+package com.nextword.backend.feature.user.dto.request.teacher;
 import jakarta.validation.constraints.*;
-import java.math.BigDecimal;
 
 public record TeacherRegistrationRequest (
         @NotBlank @Email String email,

@@ -1,10 +1,7 @@
 package com.nextword.backend.feature.user.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,8 +11,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "Usuario")
@@ -55,7 +54,14 @@ public class User implements UserDetails {
     @Column(name = "reset_token_expiration")
     private LocalDateTime resetTokenExpiration;
 
+    @Column(name = "fecha_registro")
+    private ZonedDateTime registrationDate;
 
+    @PrePersist
+    protected void onCreate() {
+        if (this.id == null) this.id = UUID.randomUUID().toString();
+        if (this.registrationDate == null) this.registrationDate = ZonedDateTime.now();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

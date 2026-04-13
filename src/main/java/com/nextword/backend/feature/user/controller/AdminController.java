@@ -1,5 +1,6 @@
 package com.nextword.backend.feature.user.controller;
 
+import com.nextword.backend.feature.user.dto.request.AdminDashboardResponse;
 import com.nextword.backend.feature.user.dto.response.UserAdminResponseDto;
 import com.nextword.backend.feature.user.entity.User;
 import com.nextword.backend.feature.user.repository.UserRepository;
@@ -20,11 +21,12 @@ public class AdminController {
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
-    @GetMapping("/users")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserAdminResponseDto>> getAllUsers() {
 
-        return ResponseEntity.ok(adminService.getAllUsers());
+    @GetMapping("/dashboard/stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AdminDashboardResponse> getDashboardStats() {
+        AdminDashboardResponse stats = adminService.getDashboardStats();
+        return ResponseEntity.ok(stats);
     }
 
 

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Repository
@@ -26,6 +27,9 @@ public interface ReservationRepository extends JpaRepository<Reservation,String>
             String teacherId, LocalDate date);
 
 
+    long countBySlotSlotDate(LocalDate today);
+
+    long countByStatusAndCreatedAtAfter(String status, ZonedDateTime date);
 }
 
 

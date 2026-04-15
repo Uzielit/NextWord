@@ -25,6 +25,7 @@ public class StudentService {
     }
 
     // MÉTODO PARA VER EL PERFIL
+    @Transactional(readOnly = true)
     public StudentProfileResponseDto getMyProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

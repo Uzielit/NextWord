@@ -34,7 +34,7 @@ public class TeacherService {
         profile.setYearsOfExperience(request.yearsOfExperience());
         profile.setProfessionalDescription(request.professionalDescription());
         profile.setCertifications(request.certifications());
-        profile.setAccountStatus("ACTIVE");
+        profile.setAccountStatus("Activo");
         teacherRepository.save(profile);
 
         Map<String, String> response = new HashMap<>();
@@ -42,6 +42,7 @@ public class TeacherService {
         return response;
     }
 
+    @Transactional(readOnly = true)
     public TeacherResponseDto getMyProfile(String email) {
 
         User user = userRepository.findByEmail(email)
@@ -61,6 +62,7 @@ public class TeacherService {
         );
     }
 
+    @Transactional(readOnly = true)
     public TeacherResponseDto getTeacherById(String id) {
         TeacherProfile profile = teacherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Profesor no encontrado"));
@@ -79,10 +81,11 @@ public class TeacherService {
         );
     }
 
+    @Transactional(readOnly = true)
     public List<TeacherResponseDto> getAllActiveTeachers() {
         return teacherRepository.findAll()
                 .stream()
-                .filter(t -> "ACTIVE".equals(t.getAccountStatus()))
+                .filter(t -> "Activo".equals(t.getAccountStatus()))
                 .map(t -> {
                     User user = userRepository.findById(t.getId())
                             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

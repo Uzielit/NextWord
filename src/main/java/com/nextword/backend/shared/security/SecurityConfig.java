@@ -35,6 +35,19 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/api/payments/webhook").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                     /*
+                      //RequestMartchers para admin
+                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
+                        //RequestMartchers para profesores
+                        .requestMatchers("/api/teachers/**").hasAnyRole("TEACHER")
+                        //RequestMartchers para estudantes
+                        .requestMatchers("/api/students/**").hasAnyRole("STUDENT")
+                        //Payments
+                        .requestMatchers("/payments/**").hasAnyRole("STUDENT","TEACHER")
+                        // Messages
+                        .requestMatchers("/api/messages/**").hasAnyRole("STUDENT","TEACHER")
+                      */
+
                         .anyRequest().authenticated()
 
                 )

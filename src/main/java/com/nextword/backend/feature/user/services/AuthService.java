@@ -6,6 +6,7 @@ import com.nextword.backend.feature.user.dto.LoginRequestDto;
 import com.nextword.backend.feature.user.dto.request.*;
 import com.nextword.backend.feature.user.dto.request.student.StudentRegistrationRequest;
 import com.nextword.backend.feature.user.entity.StudentProfile;
+import com.nextword.backend.feature.user.entity.TeacherProfile;
 import com.nextword.backend.feature.user.entity.User;
 import com.nextword.backend.feature.user.repository.StudentProfileRepository;
 import com.nextword.backend.feature.user.repository.TeacherProfileRepository;
@@ -59,6 +60,8 @@ public class AuthService {
         this.emailService = emailService;
 
     }
+
+    @Transactional
     public AuthResponseDto login(LoginRequestDto request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Datos incorrectos"));
@@ -72,6 +75,14 @@ public class AuthService {
             if (!user.getEmail().toLowerCase().endsWith("@nextword.com.mx")) {
                 throw new RuntimeException("Acceso denegado.");
             }
+        }
+        if (user.getRoleId()==2) {
+            TeacherProfile profile = teacherRepository.findById(user.getId())
+                    .orElse(null);
+            if (profile != null && "Desactivado".equals(profile.getAccountStatus())) {
+                throw new RuntimeException("Tu cuenta de profesor ha sido desactivada por el administrador.");
+            }
+
         }
 
         authenticationManager.authenticate(
@@ -113,7 +124,7 @@ public class AuthService {
     }
 
 
-    //Funicon para enviar código al correo para reestablecer la contraseña
+
     @Transactional
     public String forgotPassword(ForgotPasswordRequestDto request) {
         User user = userRepository.findByEmail(request.email())

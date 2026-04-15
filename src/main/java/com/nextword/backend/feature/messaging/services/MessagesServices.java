@@ -28,6 +28,7 @@ public class MessagesServices{
         this.messagingTemplate = messagingTemplate;
     }
 
+    @Transactional(readOnly = true)
     public List<Message> getChatHistory(String user1, String user2) {
         return messageRepository.findBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderBySentAtAsc(
                 user1, user2, user2, user1
@@ -62,6 +63,8 @@ public class MessagesServices{
                 .orElse(null); // Retorna null si no se encuentra
     }
 
+
+    @Transactional(readOnly = true)
     public List<InboxDto> getInbox(String userEmail) {
         User currentUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

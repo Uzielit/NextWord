@@ -21,11 +21,14 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
 
+
     public PaymentService(UserRepository userRepository, PaymentRepository paymentRepository) {
         this.userRepository = userRepository;
         this.paymentRepository = paymentRepository;
         MercadoPagoConfig.setAccessToken("APP_USR-5590402425687116-041223-759a2283076a3276fcb8a4456e470e44-2682147526");
     }
+
+    @Transactional
     public String claimStaticLinkPayment(String userId, Long paymentId) throws Exception {
 
         if (paymentRepository.findByMercadoPagoReference(paymentId.toString()).isPresent()) {

@@ -10,6 +10,7 @@ import com.nextword.backend.feature.user.entity.User;
 
 import com.nextword.backend.feature.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class SlotAvailableServices {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public String createTeacherSlot(CreateSlotRequest request) {
 
         User teacher = userRepository.findById(request.teacherId())
@@ -68,6 +70,9 @@ public class SlotAvailableServices {
 
         return savedSlot.getId();
     }
+
+
+    @Transactional(readOnly = true)
     public List<SlotResponse> getFilteredAvailableSlots(LocalDate start, LocalDate end, String teacherId) {
         List<SlotAvailable> slots;
         if (teacherId != null && !teacherId.isBlank()) {
@@ -89,6 +94,7 @@ public class SlotAvailableServices {
                 )).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<SlotResponse> getAvailableSlots() {
         return slotRepository.findByStatus("Disponible")
                 .stream()

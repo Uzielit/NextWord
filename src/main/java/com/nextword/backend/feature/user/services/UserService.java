@@ -26,7 +26,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional // Esto asegura que si falla una tabla, no se guarde la otra (todo o nada)
+    @Transactional
     public void updateStudentProfile(String email, StudentUpdateDto updateDto) {
         // 1. Buscamos al usuario en la tabla principal
         User user = userRepository.findByEmail(email)
@@ -55,6 +55,7 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Object> getCurrentUserData(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

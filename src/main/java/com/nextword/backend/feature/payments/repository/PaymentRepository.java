@@ -18,6 +18,9 @@ public interface PaymentRepository extends JpaRepository<Transaction, String>{
 
     @Query("SELECT COALESCE(SUM(t.totalAmount), 0) FROM Transaction t WHERE t.transactionDate >= :startDate")
     BigDecimal sumIncomeAfterDate(@Param("startDate") ZonedDateTime startDate);
+
+    @Query("SELECT COALESCE(SUM(t.totalAmount), 0) FROM Transaction t WHERE t.transactionDate >= :startDate AND t.transactionDate <= :endDate")
+    BigDecimal sumIncomeBetweenDates(@Param("startDate") ZonedDateTime startDate, @Param("endDate") ZonedDateTime endDate);
 }
 
 

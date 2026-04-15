@@ -73,6 +73,7 @@ public class ReservationServices {
         return savedReservation.getId();
     }
 
+    @Transactional()
     public List<ReservationResponse> getTeacherReservations(String teacherId, String status) {
         List<Reservation> reservasDelProfe = reservationRepository.findBySlotTeacherId(teacherId);
 
@@ -88,7 +89,6 @@ public class ReservationServices {
                     User profe = userRepository.findById(reserva.getSlot().getTeacher().getId())
                             .orElseThrow(() -> new RuntimeException("Profesor no encontrado"));
 
-                    // 🌟 AÑADIDO: Calculamos si ya tiene reseña
                     boolean hasReview = reviewRepository.existsById(reserva.getId());
 
                     return new ReservationResponse(
@@ -101,11 +101,13 @@ public class ReservationServices {
                             reserva.getTopic(),
                             reserva.getStatus(),
                             reserva.getMeetLink(),
-                            hasReview // 🌟 Aquí pasamos el valor corregido
+                            hasReview
                     );
                 })
                 .toList();
     }
+
+    @Transactional()
     public List<ReservationResponse> getUpcomingAgenda(String userId, boolean isTeacher) {
         LocalDate hoy = LocalDate.now();
         List<Reservation> agenda;

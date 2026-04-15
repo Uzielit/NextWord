@@ -13,6 +13,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByEmail(String email);
     Optional<User> findByResetToken(String resetToken);
 
+
     long countByRoleId(Integer roleId);
 
     long countByRoleIdAndRegistrationDateAfter(Integer roleId, ZonedDateTime date);

@@ -3,6 +3,7 @@ package com.nextword.backend.feature.user.services;
 import com.nextword.backend.feature.user.dto.request.TopUpRequestDto;
 import com.nextword.backend.feature.user.entity.User;
 import com.nextword.backend.feature.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ public class WalletServices {
 
     }
 
+    @Transactional
     public String addFunds(TopUpRequestDto request) {
         User student = userRepository.findById(request.studentId())
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));

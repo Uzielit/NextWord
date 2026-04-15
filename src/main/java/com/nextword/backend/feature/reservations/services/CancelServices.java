@@ -42,7 +42,7 @@ public class CancelServices {
         Reservation reservation = reservationRepository.findById(request.reservationId())
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
 
-        if (!"Pagado".equals(reservation.getStatus())) {
+        if (!"Pagado".equals(reservation.getStatus()) && !"Pendiente".equals(reservation.getStatus())) {
             throw new RuntimeException("Solo puedes cancelar clases pendientes.");
         }
 

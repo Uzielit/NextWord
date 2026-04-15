@@ -79,9 +79,9 @@ public class ReservationController {
         String dbStatus = status;
         if (status != null) {
             switch (status.toLowerCase()) {
-                case "pendientes": dbStatus = "Pagado"; break;
-                case "completadas": dbStatus = "Completada"; break;
-                case "canceladas": dbStatus = "Cancelada"; break;
+                case "Pendientes": dbStatus = "Pagado"; break;
+                case "Completadas": dbStatus = "Completada"; break;
+                case "Canceladas": dbStatus = "Cancelada"; break;
 
             }
         }
